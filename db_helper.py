@@ -1,16 +1,14 @@
 
-import os
 
 import mysql.connector
 
 
 
 cnx = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
+        host="localhost",
+        user="root",
+        password="root",
+        database="pandeyji_eatery"
 )
 
 def insert_order_tracking(order_id, status):
