@@ -1,8 +1,9 @@
 import os
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-import mysql.connector  # Assuming db_helper uses this for MySQL connections
+import mysql.connector
 import generic_helper
+import db_helper
 
 app = FastAPI()
 
@@ -11,13 +12,17 @@ inprogress_orders = {}
 
 # Database connection using environment variables
 def get_db_connection():
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT", 3306)),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
+    try:
+        return mysql.connector.connect(
+            host=os.getenv("DB_HOST"),
+            port=int(os.getenv("DB_PORT", 3306)),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            database=os.getenv("DB_NAME")
+        )
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return None
 
 @app.post("/")
 async def handle_request(request: Request):
@@ -161,8 +166,6 @@ def track_order(parameters: dict, session_id: str):
         fulfillment_text = f"No order found with order ID: {order_id}."
 
     return JSONResponse(content={"fulfillmentText": fulfillment_text})
-
-
 
 
 
